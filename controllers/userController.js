@@ -1,8 +1,6 @@
 import { User } from "../models/userModel.js"
-import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 import { generateCookie } from "../utils/feature.js"
-
 
 export const userRegister=async(req,res)=>{
     const {name,email,password}=req.body
@@ -48,4 +46,11 @@ export const userLogout=async(req,res)=>{
         message:"Logout successfully!"
     })
 
+}
+
+export const getMyProfile=(req,res)=>{
+    res.status(200).json({
+        success:true,
+        user:req.user
+    })
 }
