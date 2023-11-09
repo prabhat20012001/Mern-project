@@ -1,6 +1,6 @@
 import express from "express"
 import mongoose from "mongoose"
-import jsonParser from "json-parser"
+import bcrypt from "bcrypt"
 const app=express()
 
 app.use(express.json());
@@ -38,11 +38,20 @@ const User=mongoose.model("user",userSchema)
 app.post("/api/users/register",async(req,res)=>{
     const {name,email,password}=req.body
 
-    const user=await User.create({
-        name,email,password
+    let user=await User.findOne({email});
+    if(user)return res.status(404).json({
+        success:false,
+        message:"User Aleady exist.."
     })
-    res.json({
-        success:"user created"
+    const hashPassword=await bcrypt.hash(password,10)
+    user=await User.create({
+        name,
+        email,
+        password:hashPassword
+    })
+    res.status(201).json({
+        success:true,
+        message:"user registered successfully.."
     })
 })
 
