@@ -1,6 +1,7 @@
 import express from "express"
 import mongoose from "mongoose"
 import bcrypt from "bcrypt"
+import jwt from "jsonwebtoken"
 const app=express()
 
 app.use(express.json());
@@ -49,18 +50,42 @@ app.post("/api/users/register",async(req,res)=>{
         email,
         password:hashPassword
     })
-    res.status(201).json({
+   
+    const token=jwt.sign({_id:user._id},"secret")
+
+    res.status(201).cookie("token",token).json({
         success:true,
         message:"user registered successfully.."
     })
 })
 
 
-app.get("/api/users/getUser",async(req,res)=>{
-    const user=await User.find()
-    res.send(user)
+app.post("/api/users/login",async(req,res)=>{
+    const {email,password}=req.body
 
+    let user=await User.findOne({email});
+    if(!user)return res.status(400).json({
+        success:false,
+        message:"User not exist.."
+    })
+    const isMatch=await bcrypt.compare(password,user.password)
+    if(!isMatch)return res.status(400).json({
+        success:false,
+        message:"invalid credential"
+    })
+
+    const token=jwt.sign({_id:user._id},"secret")
+
+    res.status(201).cookie("token",token,{
+        httpOnly:true,
+        maxAge:10*60*1000
+    }).json({
+        success:true,
+        message:`welcome ${user.name}`
+    })
 })
+
+
 
 const port=4000
 
