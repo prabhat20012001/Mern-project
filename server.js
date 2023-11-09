@@ -1,7 +1,5 @@
 import express from "express"
 import mongoose from "mongoose"
-import bcrypt from "bcrypt"
-import jwt from "jsonwebtoken"
 import userRouter from "./routes/user.js"
 const app=express()
 
@@ -14,28 +12,8 @@ app.get("/",(req,res)=>{
 }
 )
 
-const userSchema=new mongoose.Schema({
-name:{
-    type:String,
-    require:true
-},
-email:{
-    type:String,
-    unique:true,
-    require:true
-},
-password:{
-    type:String,
-    require:true
-},
-createdAt:{
-    type:Date,
-    default:Date.now
-}
 
-})
 
-export const User=mongoose.model("user",userSchema)
 
 app.use("/api/users",userRouter)
 
