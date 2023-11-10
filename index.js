@@ -5,26 +5,30 @@ import cookieParser from "cookie-parser"
 import blogRoutes from "./routes/blog.js"
 import { config } from "dotenv"
 import cors from "cors"
-const app=express()
-app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+
+const app = express();
+
+app.use(cors({
+    origin: [process.env.FRONTEND_URL],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
+}));
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({
-    origin:[process.env.FRONTEND_URL],
-    methods:["GET","POST","PUT","DELETE"],
-    credentials:true
-}));
+
 config({
-    path:"./data/config.env"
-})
-mongoose.connect(process.env.MONGO_URL,{dbName:"MernProject"}).then(()=>console.log("mongodb is connected .."))
+    path: "./data/config.env"
+});
+
+mongoose.connect(process.env.MONGO_URL, { dbName: "MernProject" }).then(() => console.log("mongodb is connected .."));
 
 // user router
-app.use("/api/users",userRouter)
+app.use("/api/users", userRouter);
 
 // blog router
-app.use("/api/blogs",blogRoutes)
-const port=4000
+app.use("/api/blogs", blogRoutes);
 
-app.listen(process.env.PORT,()=>console.log(`server is running on ${process.env.PORT}`))
+const port = 4000;
+
+app.listen(process.env.PORT, () => console.log(`server is running on ${process.env.PORT}`));
