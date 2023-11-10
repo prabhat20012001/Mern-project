@@ -8,7 +8,7 @@ export const isAuthenticated=async(req,res,next)=>{
         message:"Please login .....!"
     }
     )
-    const decode=jwt.verify(token,"secret")
+    const decode=jwt.verify(token,process.env.jwt_SECRET)
     req.user=await User.findById(decode._id)
 next()    
     }
