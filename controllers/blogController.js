@@ -26,9 +26,16 @@ export const myBlog=async(req,res)=>{
 
 
 export const updateBlog=async(req,res)=>{
+    const {title,description,imageUrl}=req.body
 const id=req.params.id;
 const blogs=await Blog.findById(id)
-
+if(!blog)return res.status(404).json({
+    success:false,
+    message:"invalid ID"
+})
+blog.title=title;
+blog.description=description;
+blog.imageUrl=imageUrl
 
     res.status(200).json({
         success:true,
@@ -36,9 +43,17 @@ const blogs=await Blog.findById(id)
     })
 }
 
-export const deleteBlog=(req,res)=>{
+export const deleteBlog=async(req,res)=>{
+    const id=req.params.id;
+const blog=await Blog.findById(id)
+if(!blog)return res.status(404).json({
+    success:false,
+    message:"invalid ID"
+})
+await blog.deleteOne()
     res.json({
-        success:true
+        success:true,
+        message:"blog deleted"
     })
 }
 
